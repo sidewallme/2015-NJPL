@@ -11,12 +11,12 @@ function main()
     end
 end
 
-function tf=check_landing(m,l,u,r,d)
+function tf=check_landing(m,x,y)
 
-    left = max_in_circle(m , l(1) , l(2));
-    up = max_in_circle(m , u(1) , u(2));
-    right = max_in_circle(m , r(1), r(2));
-    down = max_in_circle(m , p(1), p(2));
+    left = max_in_circle(m,x-17,y);
+    up = max_in_circle(m,x, y-17);
+    right = max_in_circle(m,x+17, y);
+    down = max_in_circle(m,x, y+17);
     % tf is 0(false) or 1(true)
     % check if touch the bottom
     % check if angle smaller than 10
@@ -26,8 +26,8 @@ end
 
 function [a1,a2,a3] = get_plane(l,u,r,d)
     if (l+r>u+d)
-        a1='l';
-        a2='r';
+        a1=l;
+        a2=r;
         if u>d
             a3=d;
         end
