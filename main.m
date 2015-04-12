@@ -4,9 +4,10 @@ function main()
     % x from 17 to 9983
     % y from 17 to 9983
     
+  
     for x = 17: 983
         for y = 17: 983
-            result(x,y)=check_landing(M,x,y)
+            result(x,y) = check_landing(M,x,y);
         end
     end
     
@@ -18,13 +19,13 @@ function result=check_landing(m,x,y)
 
 % check if touch the bottom
 % check if angle smaller than 10
-    %all = 18;
+
     count = 0;
     center = [x,y];
     angle = 20;
     for i=1:18
         theta = angle/360*pi;
-        [a,b,c,d,e,f,g,h] = rotation(x, y, theta);
+        [a,b,c,d,e,f,g,h] = rotation(x, y, theta)
         ifOk = checkAll(m, center, [round(a),round(b),round(c),round(d),round(e),round(f),round(g),round(h)]);
         
         if (ifOk == true)
@@ -42,10 +43,10 @@ end
 function ok=checkAll(m, center, listxy)
     %get the highest four points that decide the feet
     
-    p1 = getFiveCircleMax(m,listxy(1),listxy(2));
-    p2 = getFiveCircleMax(m,listxy(3),listxy(4));
-    p3 = getFiveCircleMax(m,listxy(5),listxy(6));
-    p4 = getFiveCircleMax(m,listxy(7),listxy(8));
+    [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(1),listxy(2));
+    [p2x,p2y,p2z] = getFiveCircleMax(m,listxy(3),listxy(4));
+    [p2x,p3y,p3z] = getFiveCircleMax(m,listxy(5),listxy(6));
+    [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(7),listxy(8));
     
     %get the highest three points that decide the plane
     %these three points are arguments along the center point
@@ -88,6 +89,35 @@ function checkTwo = checkAngle(p1, p2, p3)
 
 end
 
+
+function [nx,ny,nz]=getFiveCircleMax(m,x,y)
+    % x,y are coordinates in Matrix m 
+    % max_in_circle is the max height of the circle C (radius = 5, center =
+    % (x,y));
+    
+    filter=[0 1 1 1 0; 1 1 1 1 1; 1 1 1 1 1; 1 1 1 1 1; 0 1 1 1 0;];
+        
+    land = m(x-2:x+2,y-2:y+2)
+    land_circle=land.*filter;
+    nx=0;
+    ny=0;
+    nz=max(max(land_circle));
+    
+    for i=1:5
+        for j=1:5
+            if(land(i,j)==nz)
+                nx=x-(3-i);
+                ny=y-(3-j);
+            end
+        end
+    end
+end
+
+
+
+
+
+
 function h=getHeight(m,p)
     h=m(p(1),p(2));
 end
@@ -110,27 +140,7 @@ function [a1,a2,a3]=getMaxThree(p1,p2,p3,p4)
     end
 end
 
-function [nx,ny,nz]=getFiveCircleMax(m,x,y)
-    % x,y are coordinates in Matrix m 
-    % max_in_circle is the max height of the circle C (radius = 5, center =
-    % (x,y));
-    
-    filter=[0 1 1 1 0; 1 1 1 1 1; 1 1 1 1 1; 1 1 1 1 1; 0 1 1 1 0;];
-        
-    land=m(x-2:x+2,y-2:y+2);
-    land_circle=land.*filter;
-    
-    nz=max(land_circle);
-    
-    for i=1:5
-        for j=1:5
-            if(land(i,j)==nz)
-                nx=x-(3-i);
-                ny=y-(3-j);
-            end
-        end
-    end
-end
+
 
 function ifInFeet=check_if_in_feet(x,y,listxy)
     ifInFeet=true;
