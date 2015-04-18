@@ -25,8 +25,8 @@ function result=check_landing(m,x,y)
     angle = 20;
     for i=1:18
         theta = angle/360*pi;
-        [a,b,c,d,e,f,g,h] = rotation(x, y, theta)
-        ifOk = checkAll(m, center, [round(a),round(b),round(c),round(d),round(e),round(f),round(g),round(h)]);
+        [a,b,c,d,e,f,g,h] = rotation(x, y, theta);
+        ifOk = checkAll(m, center, [int8(round(a)),int8(round(b)),int8(round(c)),int8(round(d)),int8(round(e)),int8(round(f)),int8(round(g)),int8(round(h))]);
         
         if (ifOk == true)
             count = count + 1;
@@ -45,7 +45,7 @@ function ok=checkAll(m, center, listxy)
     
     [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(1),listxy(2));
     [p2x,p2y,p2z] = getFiveCircleMax(m,listxy(3),listxy(4));
-    [p2x,p3y,p3z] = getFiveCircleMax(m,listxy(5),listxy(6));
+    [p3x,p3y,p3z] = getFiveCircleMax(m,listxy(5),listxy(6));
     [p4x,p4y,p4z] = getFiveCircleMax(m,listxy(7),listxy(8));
     
     p1 = [p1x,p1y,p1z]
@@ -54,7 +54,7 @@ function ok=checkAll(m, center, listxy)
     p4 = [p4x,p4y,p4z]
     %get the highest three points that decide the plane
     %these three points are arguments along the center point
-    [a1,a2,a3]=getMaxThree(p1,p2,p3);
+    [a1,a2,a3]=getMaxThree(p1,p2,p3,p4);
 
     %two tests of the landing condition
     if_sth_touch = checkTouching(m, center, a1, a2, a3);
@@ -68,8 +68,10 @@ function ok=checkAll(m, center, listxy)
 end
 
 function checkOne = checkTouching(m, center, p1, p2, p3)
-    target = [x, y, m(x,y)];
-    checkOne = checkTouchingBottom(target, p1, p2, p3);
+    x = center(1);
+    y = center(2);
+    target = [center(1), center(2), m(x,y)];
+    checkOne = checkTouchingBottom(m, target, p1, p2, p3);
 end
 
 function checkTwo = checkAngle(p1, p2, p3)
@@ -100,8 +102,17 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
     % (x,y));
     
     filter=[0 1 1 1 0; 1 1 1 1 1; 1 1 1 1 1; 1 1 1 1 1; 0 1 1 1 0;];
-        
-    land = m(x-2:x+2,y-2:y+2)
+    disp('a')
+    int8(x)
+    disp('b')
+    int8(y)
+    if(x<=2)
+        x=x+1;
+    end
+    if(y<=2)
+        y=y+1;
+    end
+    land = m(int8(x)-2:int8(x)+2,int8(y)-2:int8(y)+2);
     land_circle=land.*filter;
     nx=0;
     ny=0;
@@ -159,9 +170,9 @@ function ifInDistance=distanceInR(r,x1,y1,x2,y2)
     ifInDistance= r^2 <= (x1-x2)^2+(y1-y2)^2;
 end
 
-function if_over_bottom = checkTouchingBottom(center,p1,p2,p3)
+function if_over_bottom = checkTouchingBottom(m, center,p1,p2,p3)
     
-    [cx,cy,cz]=getXYZ(center);
+    [cx,cy,cz]=getXYZ(m, center);
     
     if_over_bottom=false;
     
@@ -177,7 +188,7 @@ function if_over_bottom = checkTouchingBottom(center,p1,p2,p3)
         for j=cy-17:cy+17
             within_bottom = distanceInR(17,i,j,cx,cy);
             if (within_bottom == true)
-                [x, y, z] = getXYZ([i,j]);
+                [x, y, z] = getXYZ(m, [i,j]);
                 dist = abs((A*x+B*y+C*z+D)/(sqrt(A^2+B^2+C^2)));
                 if (dist > 0.39)
                     if_over_bottom=true;
@@ -188,10 +199,10 @@ function if_over_bottom = checkTouchingBottom(center,p1,p2,p3)
     
 end
 
-function [x,y,z]=getXYZ(p)
+function [x,y,z]=getXYZ(m,p)
     x=p(1);
     y=p(2);
-    z=p(3);
+    z=m(x,y);
 end
 
 function [x,y]=getXY(p)
