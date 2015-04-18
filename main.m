@@ -8,13 +8,12 @@ function result = main()
         disp(x)
         for y = 18: 982
             result(x,y) = check_landing(M,x,y);
-        end
-        if(mod(y,10) == 0)
+            if(mod(y,10) == 0)
                 disp('Progress in this row (percentage):');
                 disp(x/964);
+            end
         end
     end
-    
 end
 
 function result=check_landing(m,x,y)
