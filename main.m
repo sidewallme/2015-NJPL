@@ -3,13 +3,12 @@ function result = main()
     result = zeros(1000); 
     % x from 17 to 9983
     % y from 17 to 9983
-    
-  
     for x = 18: 982
         disp('Currently process Row:');
         disp(x)
         for y = 18: 982
-            result(x,y) = check_landing(M,x,y);
+            area = M(x-17:x+17,y-17:y+17);
+            result(x,y) = check_landing(area,18,18);
         end
         if(mod(x,2) == 0)
                 disp('Finishing');
