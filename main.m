@@ -6,6 +6,8 @@ function result = main()
     
   
     for x = 18: 982
+        disp('Currently process Row:');
+        disp(x)
         for y = 18: 982
             result(x,y) = check_landing(M,x,y);
         end
