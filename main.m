@@ -46,8 +46,12 @@ function ok=checkAll(m, center, listxy)
     [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(1),listxy(2));
     [p2x,p2y,p2z] = getFiveCircleMax(m,listxy(3),listxy(4));
     [p2x,p3y,p3z] = getFiveCircleMax(m,listxy(5),listxy(6));
-    [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(7),listxy(8));
+    [p4x,p4y,p4z] = getFiveCircleMax(m,listxy(7),listxy(8));
     
+    p1 = [p1x,p1y,p1z]
+    p2 = [p2x,p2y,p2z]
+    p3 = [p3x,p3y,p3z]
+    p4 = [p4x,p4y,p4z]
     %get the highest three points that decide the plane
     %these three points are arguments along the center point
     [a1,a2,a3]=getMaxThree(p1,p2,p3);
