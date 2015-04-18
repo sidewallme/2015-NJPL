@@ -1,13 +1,17 @@
-function main()
+function result = main()
     M = abs(rand(1000,1000));
     result = zeros(1000); 
     % x from 17 to 9983
     % y from 17 to 9983
     
   
-    for x = 17: 983
-        for y = 17: 983
+    for x = 18: 982
+        for y = 18: 982
             result(x,y) = check_landing(M,x,y);
+        end
+        if(mod(x,2) == 0)
+                disp('Finishing');
+                disp(x/964);
         end
     end
     
@@ -48,14 +52,14 @@ function ok=checkAll(m, center, listxy)
     [p3x,p3y,p3z] = getFiveCircleMax(m,listxy(5),listxy(6));
     [p4x,p4y,p4z] = getFiveCircleMax(m,listxy(7),listxy(8));
     
-    p1 = [p1x,p1y,p1z]
-    p2 = [p2x,p2y,p2z]
-    p3 = [p3x,p3y,p3z]
-    p4 = [p4x,p4y,p4z]
+    p1 = [p1x,p1y,p1z];
+    p2 = [p2x,p2y,p2z];
+    p3 = [p3x,p3y,p3z];
+    p4 = [p4x,p4y,p4z];
+    
     %get the highest three points that decide the plane
     %these three points are arguments along the center point
     [a1,a2,a3]=getMaxThree(p1,p2,p3,p4);
-
     %two tests of the landing condition
     if_sth_touch = checkTouching(m, center, a1, a2, a3);
     if_big_angle = checkAngle(a1,a2,a3);
@@ -86,7 +90,7 @@ function checkTwo = checkAngle(p1, p2, p3)
     B2=0;
     C2=1;
     D2=0;
-    COSTHETA = abs(A1*A2+B1*B2+C1*C2)/(sqrt(A1^2+B1^2+C1^2)*sqrt(A2^2+B2^2+C2^2));
+    COSTHETA = abs(A1*A2+B1*B2+C1*C2)/(sqrt(double(A1^2+B1^2+C1^2))*sqrt(double(A2^2+B2^2+C2^2)));
     
     checkTwo = false;
     if COSTHETA < cos(pi/10)
@@ -101,22 +105,16 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
     % max_in_circle is the max height of the circle C (radius = 5, center =
     % (x,y));
     
-    filter=[0 1 1 1 0; 1 1 1 1 1; 1 1 1 1 1; 1 1 1 1 1; 0 1 1 1 0;];
-    disp('a')
-    int8(x)
-    disp('b')
-    int8(y)
-    if(x<=2)
-        x=x+1;
-    end
-    if(y<=2)
-        y=y+1;
-    end
+    %filter=[0 1 1 1 0; 1 1 1 1 1; 1 1 1 1 1; 1 1 1 1 1; 0 1 1 1 0;];
     land = m(int8(x)-2:int8(x)+2,int8(y)-2:int8(y)+2);
-    land_circle=land.*filter;
+    land(1,1)=0;
+    land(1,5)=0;
+    land(5,1)=0;
+    land(5,5)=0;
+    %land_circle = land.*filter;
     nx=0;
     ny=0;
-    nz=max(max(land_circle));
+    nz=max(max(land));
     
     for i=1:5
         for j=1:5
@@ -126,15 +124,6 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
             end
         end
     end
-end
-
-
-
-
-
-
-function h=getHeight(m,p)
-    h=m(p(1),p(2));
 end
 
 function [a1,a2,a3]=getMaxThree(p1,p2,p3,p4)
@@ -156,23 +145,15 @@ function [a1,a2,a3]=getMaxThree(p1,p2,p3,p4)
 end
 
 
-
-function ifInFeet=check_if_in_feet(x,y,listxy)
-    ifInFeet=true;
-    for i=1:4
-        if(dist(5,x,y,listxy(i),listxy(i+1)))
-            ifInFeet=false;
-        end
-    end
-end
-
 function ifInDistance=distanceInR(r,x1,y1,x2,y2)
     ifInDistance= r^2 <= (x1-x2)^2+(y1-y2)^2;
 end
 
 function if_over_bottom = checkTouchingBottom(m, center,p1,p2,p3)
-    
-    [cx,cy,cz]=getXYZ(m, center);
+
+    cx = center(1);
+    cy = center(2);
+    cz = center(3);
     
     if_over_bottom=false;
     
@@ -188,8 +169,10 @@ function if_over_bottom = checkTouchingBottom(m, center,p1,p2,p3)
         for j=cy-17:cy+17
             within_bottom = distanceInR(17,i,j,cx,cy);
             if (within_bottom == true)
-                [x, y, z] = getXYZ(m, [i,j]);
-                dist = abs((A*x+B*y+C*z+D)/(sqrt(A^2+B^2+C^2)));
+                x = i;
+                y = j;
+                z = m(i,j);
+                dist = abs((A*x+B*y+C*z+D)/(sqrt(double(A^2+B^2+C^2))));
                 if (dist > 0.39)
                     if_over_bottom=true;
                 end
