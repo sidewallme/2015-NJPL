@@ -7,11 +7,10 @@ function result = main()
         disp('Currently process Row:');
         disp(x)
         for y = 18: 982
-            area = M(x-17:x+17,y-17:y+17);
-            result(x,y) = check_landing(area,18,18);
+            result(x,y) = check_landing(M,x,y);
         end
-        if(mod(x,2) == 0)
-                disp('Finishing');
+        if(mod(y,10) == 0)
+                disp('Progress in this row (percentage):');
                 disp(x/964);
         end
     end
