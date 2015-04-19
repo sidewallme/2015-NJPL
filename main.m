@@ -1,23 +1,23 @@
 function result = main(M)
     %M = abs(rand(1000,1000));
     result = zeros(1000); 
-    
+    angle = cos(pi/18);
     % x from 18 to 982
     % y from 18 to 982
     table = RotationLookupTable();
     
-    for x = 18:982
+    for x = 18:102
         disp('Currently process Row:');
         disp(x)
         
-        for y = 18:982
-            result(x,y) = check_landing(M, x, y, table);
+        for y = 18:102
+            result(x,y) = check_landing(M, x, y, table, angle);
         end
     end
 end
 
 
-function result=check_landing(m,x,y,table)
+function result=check_landing(m,x,y,table, angle)
 
 	% check if touch the bottom	
 	% check if angle smaller than 10
@@ -29,7 +29,7 @@ function result=check_landing(m,x,y,table)
         tmp = tmp';
     
         [a, b, c, d, e, f, g, h] = get_real(tmp, x, y);
-        ifOk = checkAll(m, center, [ round(a), round(b), round(c), round(d), round(e), round(f), round(g), round(h)]);
+        ifOk = checkAll(m, center, [ round(a), round(b), round(c), round(d), round(e), round(f), round(g), round(h)], angle);
         
         if (ifOk == false)
             break;
@@ -43,7 +43,7 @@ function result=check_landing(m,x,y,table)
     end
 end
 
-function ok=checkAll(m, center, listxy)
+function ok=checkAll(m, center, listxy, angle)
     %get center point
     x = center(1);
     y = center(2);
@@ -71,10 +71,10 @@ function ok=checkAll(m, center, listxy)
     
     
     %two tests of the landing condition
-    if_big_angle = checkAngle(plane_parameters);
+    if_big_angle = checkAngle(plane_parameters, angle);
     
     if (if_big_angle == false)
-        if_sth_touch = checkTouchingBottom(m, target, p1, p2, p3, plane_parameters);
+        if_sth_touch = checkTouchingBottom(m, target, plane_parameters);
         if (if_sth_touch == true)
             ok = false;
             return;
@@ -100,7 +100,7 @@ function [A, B, C, D] = plane_function(p1, p2, p3)
 end
 
 
-function checkTwo = checkAngle(plane_parameters)
+function checkTwo = checkAngle(plane_parameters, angle)
     A = plane_parameters(1);
     B = plane_parameters(2);
     C = plane_parameters(3);
@@ -109,7 +109,7 @@ function checkTwo = checkAngle(plane_parameters)
     COSTHETA = abs(C*1)/(sqrt(double(A^2+B^2+C^2)));
     
     checkTwo = false;
-    if COSTHETA < cos(pi/10)
+    if COSTHETA < angle
         checkTwo = true; % angle is bigger than 10
     end
 end
@@ -165,7 +165,7 @@ function ifInDistance=distanceInR(r,x1,y1,x2,y2)
 end
 
 
-function if_over_bottom = checkTouchingBottom(m, center, p1, p2, p3, plane_parameters)
+function if_over_bottom = checkTouchingBottom(m, center, plane_parameters)
 
     cx = center(1);
     cy = center(2);
