@@ -72,11 +72,19 @@ function ok=checkAll(m, center, listxy)
     
     %two tests of the landing condition
     if_big_angle = checkAngle(plane_parameters);
-    if_sth_touch = checkTouchingBottom(m, target, p1, p2, p3, plane_parameters);
     
-    ok = false;
-    if ( if_big_angle == false && if_sth_touch == false && if_big_angle == false)
-        ok=true;
+    if (if_big_angle == false)
+        if_sth_touch = checkTouchingBottom(m, target, p1, p2, p3, plane_parameters);
+        if (if_sth_touch == true)
+            ok = false;
+            return;
+        else
+            ok = true;
+            return;
+        end 
+    else
+        ok = false;
+        return;
     end
     
 end
