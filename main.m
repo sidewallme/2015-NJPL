@@ -1,7 +1,7 @@
 function result = main(M)
     %M = abs(rand(1000,1000));
     result = zeros(1000); 
-    angle = cos(pi/12);
+    angle = cos(10*pi/180);
     % x from 18 to 982
     % y from 18 to 982
     table = RotationLookupTable();
