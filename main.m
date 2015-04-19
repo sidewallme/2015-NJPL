@@ -184,10 +184,7 @@ function if_over_bottom = checkTouchingBottom(m, center, p1, p2, p3, plane_param
         for j=cy-17:cy+17
             within_bottom = distanceInR(17,i,j,cx,cy);
             if (within_bottom == true)
-                x = i;
-                y = j;
-                z = m(i,j);
-                dist = abs((A*x+B*y+C*z+D)/(sqrt(double(A^2+B^2+C^2))));
+                dist = abs((A*i+B*j+C*m(i,j)+D)/(sqrt(double(A^2+B^2+C^2))));
                 if (dist > 0.39)
                     if_over_bottom=true;
                 end
