@@ -1,51 +1,55 @@
 function result = main()
     M = abs(rand(1000,1000));
     result = zeros(1000); 
-    % x from 17 to 9983
-    % y from 17 to 9983
+    % x from 17 to 983
+    % y from 17 to 983
     for x = 18: 982
         disp('Currently process Row:');
         disp(x)
         for y = 18: 982
             result(x,y) = check_landing(M,x,y);
-            if(mod(y,10) == 0)
-                disp('Progress in this row (percentage):');
-                disp(x/964);
-            end
+            
+        end
+        if (mod(x,10) == 0)
+           disp('Progress (percentage):');
+           disp((x-18)/964);
         end
     end
 end
 
 function result=check_landing(m,x,y)
 
-% tf is 0(false) or 1(true)
-
-% check if touch the bottom
-% check if angle smaller than 10
-
-    count = 0;
+	% check if touch the bottom	
+	% check if angle smaller than 10
     center = [x,y];
     angle = 20;
-    for i=1:18
+    ifOk = true;
+    for i = 1:18
         theta = angle/360*pi;
-        [a,b,c,d,e,f,g,h] = rotation(x, y, theta);
+        [a, b, c, d, e, f, g, h] = rotation(x, y, theta);
         ifOk = checkAll(m, center, [int8(round(a)),int8(round(b)),int8(round(c)),int8(round(d)),int8(round(e)),int8(round(f)),int8(round(g)),int8(round(h))]);
-        
-        if (ifOk == true)
-            count = count + 1;
+        if (ifOk == false)
+            break;
         end
-        
         angle = angle + 20;
     end
-    result=0;
-    if(count>=9)
-        result=1;
+    
+    if(ifOk == true)
+    	result = 1;
+    else
+    	result = 0;
     end
+    
 end
 
 function ok=checkAll(m, center, listxy)
-    %get the highest four points that decide the feet
+    %get center point
+    x = center(1);
+    y = center(2);
+    target = [center(1), center(2), m(x,y)];
     
+    
+    %get the highest four points that decide the feet
     [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(1),listxy(2));
     [p2x,p2y,p2z] = getFiveCircleMax(m,listxy(3),listxy(4));
     [p3x,p3y,p3z] = getFiveCircleMax(m,listxy(5),listxy(6));
@@ -59,9 +63,16 @@ function ok=checkAll(m, center, listxy)
     %get the highest three points that decide the plane
     %these three points are arguments along the center point
     [a1,a2,a3]=getMaxThree(p1,p2,p3,p4);
+    
+    
+    %get the function parameters
+    [A, B, C, D] = plane_function(a1, a2, a3);
+    plane_parameters = [A, B, C, D];
+    
+    
     %two tests of the landing condition
-    if_sth_touch = checkTouching(m, center, a1, a2, a3);
-    if_big_angle = checkAngle(a1,a2,a3);
+    if_big_angle = checkAngle(plane_parameters);
+    if_sth_touch = checkTouchingBottom(m, target, p1, p2, p3, plane_parameters);
     
     ok = false;
     if ( if_big_angle == false && if_sth_touch == false && if_big_angle == false)
@@ -70,26 +81,22 @@ function ok=checkAll(m, center, listxy)
     
 end
 
-function checkOne = checkTouching(m, center, p1, p2, p3)
-    x = center(1);
-    y = center(2);
-    target = [center(1), center(2), m(x,y)];
-    checkOne = checkTouchingBottom(m, target, p1, p2, p3);
-end
-
-function checkTwo = checkAngle(p1, p2, p3)
+function [A, B, C, D] = plane_function(p1, p2, p3)
     normal = cross(p1 - p2, p1 - p3);
     %get the plane function parameters
-    A1=normal(1);
-    B1=normal(2);
-    C1=normal(3);
-    D1 = -(p1(1)*A1 + p1(2)*B1 + p1(3)*C1);
+    A=normal(1);
+    B=normal(2);
+    C=normal(3);
+    D = -(p1(1)*A + p1(2)*B + p1(3)*C);
+end
+
+function checkTwo = checkAngle(plane_parameters)
+    A = plane_parameters(1);
+    B = plane_parameters(2);
+    C = plane_parameters(3);
+    D = plane_parameters(4);
     
-    A2=0;
-    B2=0;
-    C2=1;
-    D2=0;
-    COSTHETA = abs(A1*A2+B1*B2+C1*C2)/(sqrt(double(A1^2+B1^2+C1^2))*sqrt(double(A2^2+B2^2+C2^2)));
+    COSTHETA = abs(C*1)/(sqrt(double(A^2+B^2+C^2)));
     
     checkTwo = false;
     if COSTHETA < cos(pi/10)
@@ -104,13 +111,12 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
     % max_in_circle is the max height of the circle C (radius = 5, center =
     % (x,y));
     
-    %filter=[0 1 1 1 0; 1 1 1 1 1; 1 1 1 1 1; 1 1 1 1 1; 0 1 1 1 0;];
     land = m(int8(x)-2:int8(x)+2,int8(y)-2:int8(y)+2);
-    land(1,1)=0;
-    land(1,5)=0;
-    land(5,1)=0;
-    land(5,5)=0;
-    %land_circle = land.*filter;
+    land(1,1) = 0;
+    land(1,5) = 0;
+    land(5,1) = 0;
+    land(5,5) = 0;
+
     nx=0;
     ny=0;
     nz=max(max(land));
@@ -148,7 +154,7 @@ function ifInDistance=distanceInR(r,x1,y1,x2,y2)
     ifInDistance= r^2 <= (x1-x2)^2+(y1-y2)^2;
 end
 
-function if_over_bottom = checkTouchingBottom(m, center,p1,p2,p3)
+function if_over_bottom = checkTouchingBottom(m, center, p1, p2, p3, plane_parameters)
 
     cx = center(1);
     cy = center(2);
@@ -156,12 +162,11 @@ function if_over_bottom = checkTouchingBottom(m, center,p1,p2,p3)
     
     if_over_bottom=false;
     
-    normal = cross(p1 - p2, p1 - p3);
     %get the plane function parameters
-    A=normal(1);
-    B=normal(2);
-    C=normal(3);
-    D = -(p1(1)*A + p1(2)*B + p1(3)*C);
+    A = plane_parameters(1);
+    B = plane_parameters(2);
+    C = plane_parameters(3);
+    D = plane_parameters(4);
     
     
     for i=cx-17:cx+17
@@ -179,17 +184,6 @@ function if_over_bottom = checkTouchingBottom(m, center,p1,p2,p3)
         end
     end
     
-end
-
-function [x,y,z]=getXYZ(m,p)
-    x=p(1);
-    y=p(2);
-    z=m(x,y);
-end
-
-function [x,y]=getXY(p)
-    x=p(1);
-    y=p(2);
 end
 
 function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
