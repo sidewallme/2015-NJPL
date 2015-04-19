@@ -6,11 +6,11 @@ function result = main(M)
     % y from 18 to 982
     table = RotationLookupTable();
     
-    for x = 18:102
+    for x = 18:500
         disp('Currently Process Row:');
         disp(x)
         
-        for y = 18:102
+        for y = 18:500
             result(x,y) = check_landing(M, x, y, table, angle);
         end
     end
@@ -159,7 +159,7 @@ function ifInDistance=distanceInR(r,x1,y1,x2,y2)
     ifInDistance = r^2 >= (x1-x2)^2+(y1-y2)^2;
 end
 
-
+%CHECK(correct, JX)
 function if_over_bottom = checkTouchingBottom(m, center, plane_parameters)
 
     cx = center(1);
@@ -179,16 +179,21 @@ function if_over_bottom = checkTouchingBottom(m, center, plane_parameters)
         for j=cy-17:cy+17
             within_bottom = distanceInR(17,i,j,cx,cy);
             if (within_bottom == true)
-                dist = abs((A*i+B*j+C*m(i,j)+D)/(sqrt(double(A^2+B^2+C^2))));
-                if (dist > 0.39)
-                    if_over_bottom=true;
+                height = (-D-(A*i+B*j))/C;
+                over = m(i,j) > height;
+                if (over == true)
+                    dist = abs((A*i+B*j+C*m(i,j)+D)/(sqrt(double(A^2+B^2+C^2))));
+                    if (dist > 0.39 && over)
+                        if_over_bottom=true;
+                        return;
+                    end
                 end
             end
         end
     end
 end
 
-
+%CHECK(correct, JX)
 function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
 
 %{
@@ -226,7 +231,7 @@ function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
 
 end
 
-
+%CHECK(correct, JX)
 function table = RotationLookupTable()
     table = zeros(8,16);
     for i = 1:6
@@ -235,7 +240,7 @@ function table = RotationLookupTable()
     end
 end
 
-
+%CHECK(correct, JX)
 function [x1, y1, x2, y2, x3, y3, x4, y4] = get_real(tmp, x, y)
     x1 = tmp(1) + x;
     y1 = tmp(2) + y;
