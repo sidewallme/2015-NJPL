@@ -6,11 +6,11 @@ function result = main(M)
     % y from 17 to 983
     table = RotationLookupTable();
     
-    for x = 18: 982
+    for x = 18:982
         disp('Currently process Row:');
         disp(x)
         
-        for y = 18: 982
+        for y = 18:982
             result(x,y) = check_landing(M,x,y,table);
         end
         
@@ -145,7 +145,7 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
     end
 end
 
-
+%CHECK(correct, JX)
 function [a1,a2,a3]=getMaxThree(p1,p2,p3,p4)
     if((p1(3)+p3(3))>(p2(3)+p4(3)))
         a1 = p1;
@@ -166,7 +166,7 @@ end
 
 
 function ifInDistance=distanceInR(r,x1,y1,x2,y2)
-    ifInDistance= r^2 <= (x1-x2)^2+(y1-y2)^2;
+    ifInDistance = r^2 >= (x1-x2)^2+(y1-y2)^2;
 end
 
 
