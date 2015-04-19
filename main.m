@@ -13,11 +13,6 @@ function result = main(M)
         for y = 18:982
             result(x,y) = check_landing(M, x, y, table);
         end
-        
-        if (mod(x,10) == 0)
-           disp('Progress (percentage):');
-           disp((x-18)/964);
-        end
     end
 end
 
