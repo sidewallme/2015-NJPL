@@ -1,5 +1,5 @@
-function result = main()
-    M = abs(rand(1000,1000));
+function result = main(M)
+    %M = abs(rand(1000,1000));
     result = zeros(1000); 
     % x from 17 to 983
     % y from 17 to 983
@@ -210,7 +210,6 @@ function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
     v2 = [cos(theta) sin(theta); sin(theta) -cos(theta)]*[x_2; y_2];
     v3 = [cos(theta) sin(theta); sin(theta) -cos(theta)]*[x_3; y_3];
     v4 = [cos(theta) sin(theta); sin(theta) -cos(theta)]*[x_4; y_4];
-
 
     x1 = v1(1,1) + x;
     x2 = v2(1,1) + x;
