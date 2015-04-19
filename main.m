@@ -1,6 +1,7 @@
 function result = main(M)
     %M = abs(rand(1000,1000));
     result = zeros(1000); 
+    
     % x from 17 to 983
     % y from 17 to 983
     table = RotationLookupTable();
@@ -93,6 +94,7 @@ function ok=checkAll(m, center, listxy)
     
 end
 
+
 function [A, B, C, D] = plane_function(p1, p2, p3)
     normal = cross(p1 - p2, p1 - p3);
     %get the plane function parameters
@@ -101,6 +103,7 @@ function [A, B, C, D] = plane_function(p1, p2, p3)
     C=normal(3);
     D = -(p1(1)*A + p1(2)*B + p1(3)*C);
 end
+
 
 function checkTwo = checkAngle(plane_parameters)
     A = plane_parameters(1);
@@ -142,6 +145,7 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
     end
 end
 
+
 function [a1,a2,a3]=getMaxThree(p1,p2,p3,p4)
     if((p1(3)+p3(3))>(p2(3)+p4(3)))
         a1 = p1;
@@ -164,6 +168,7 @@ end
 function ifInDistance=distanceInR(r,x1,y1,x2,y2)
     ifInDistance= r^2 <= (x1-x2)^2+(y1-y2)^2;
 end
+
 
 function if_over_bottom = checkTouchingBottom(m, center, p1, p2, p3, plane_parameters)
 
@@ -196,14 +201,15 @@ function if_over_bottom = checkTouchingBottom(m, center, p1, p2, p3, plane_param
     end
 end
 
+
 function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
 
 %{
-0,0...      x2,y2
-.
-.   x3,y3    x,y    x1,y1
-.
-            x4,y4
+............x2,y2.........
+..........................
+....x3,y3....x,y.....x1,y1
+..........................
+............x4,y4.........
 %}
     x_1 = 15;
     x_2 = 0;
@@ -233,6 +239,7 @@ function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
 
 end
 
+
 function table = RotationLookupTable()
     table = zeros(8,16);
     for i = 1:16
@@ -240,6 +247,7 @@ function table = RotationLookupTable()
         table(:,i) = [x1, y1, x2, y2, x3, y3, x4, y4]';
     end
 end
+
 
 function [x1, y1, x2, y2, x3, y3, x4, y4] = get_real(tmp, x, y)
     x1 = tmp(1) + x;
