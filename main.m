@@ -6,11 +6,11 @@ function result = main(M)
     % y from 18 to 982
     table = RotationLookupTable();
     
-    for x = 18:982
+    for x = 18:983
         disp('Currently Process Row:');
         disp(x)
         
-        for y = 18:982
+        for y = 18:983
             result(x,y) = check_landing(M, x, y, table, angle);
         end
     end
