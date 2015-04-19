@@ -2,8 +2,8 @@ function result = main(M)
     %M = abs(rand(1000,1000));
     result = zeros(1000); 
     
-    % x from 17 to 983
-    % y from 17 to 983
+    % x from 18 to 982
+    % y from 18 to 982
     table = RotationLookupTable();
     
     for x = 18:982
@@ -11,7 +11,7 @@ function result = main(M)
         disp(x)
         
         for y = 18:982
-            result(x,y) = check_landing(M,x,y,table);
+            result(x,y) = check_landing(M, x, y, table);
         end
         
         if (mod(x,10) == 0)
@@ -34,7 +34,7 @@ function result=check_landing(m,x,y,table)
         tmp = tmp';
     
         [a, b, c, d, e, f, g, h] = get_real(tmp, x, y);
-        ifOk = checkAll(m, center, [ round(a), round(b), round(c), round(d), round(e), round(f), round(g), round(h) ] );
+        ifOk = checkAll(m, center, [ round(a), round(b), round(c), round(d), round(e), round(f), round(g), round(h)]);
         
         if (ifOk == false)
             break;
@@ -242,8 +242,8 @@ end
 
 function table = RotationLookupTable()
     table = zeros(8,16);
-    for i = 1:16
-        [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(0, 0, i*pi/32);
+    for i = 1:6
+        [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(0, 0, i*pi/12);
         table(:,i) = [x1, y1, x2, y2, x3, y3, x4, y4]';
     end
 end
