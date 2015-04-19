@@ -7,7 +7,7 @@ function result = main(M)
     table = RotationLookupTable();
     
     for x = 18:102
-        disp('Currently process Row:');
+        disp('Currently Process Row:');
         disp(x)
         
         for y = 18:102
@@ -45,15 +45,13 @@ end
 
 function ok=checkAll(m, center, listxy, angle)
     %get center point
-    x = center(1);
-    y = center(2);
-    target = [center(1), center(2), m(x,y)];
+    target = [center(1), center(2), m(center(1), center(2))];
     
     %get the highest four points that decide the feet
-    [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(1),listxy(2));
-    [p2x,p2y,p2z] = getFiveCircleMax(m,listxy(3),listxy(4));
-    [p3x,p3y,p3z] = getFiveCircleMax(m,listxy(5),listxy(6));
-    [p4x,p4y,p4z] = getFiveCircleMax(m,listxy(7),listxy(8));
+    [p1x,p1y,p1z] = getFiveCircleMax(m, listxy(1), listxy(2));
+    [p2x,p2y,p2z] = getFiveCircleMax(m, listxy(3), listxy(4));
+    [p3x,p3y,p3z] = getFiveCircleMax(m, listxy(5), listxy(6));
+    [p4x,p4y,p4z] = getFiveCircleMax(m, listxy(7), listxy(8));
     
     p1 = [p1x,p1y,p1z];
     p2 = [p2x,p2y,p2z];
@@ -104,7 +102,6 @@ function checkTwo = checkAngle(plane_parameters, angle)
     A = plane_parameters(1);
     B = plane_parameters(2);
     C = plane_parameters(3);
-    D = plane_parameters(4);
     
     COSTHETA = abs(C*1)/(sqrt(double(A^2+B^2+C^2)));
     
@@ -126,8 +123,6 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
     land(5,1) = 0;
     land(5,5) = 0;
 
-    nx=0;
-    ny=0;
     nz=max(max(land));
     
     for i=1:5
@@ -159,7 +154,7 @@ function [a1,a2,a3]=getMaxThree(p1,p2,p3,p4)
     end
 end
 
-
+%CHECK(correct, JX)
 function ifInDistance=distanceInR(r,x1,y1,x2,y2)
     ifInDistance = r^2 >= (x1-x2)^2+(y1-y2)^2;
 end
