@@ -3,13 +3,16 @@ function result = main(M)
     result = zeros(1000); 
     % x from 17 to 983
     % y from 17 to 983
+    table = RotationLookupTable();
+    
     for x = 18: 982
         disp('Currently process Row:');
         disp(x)
+        
         for y = 18: 982
-            result(x,y) = check_landing(M,x,y);
-            
+            result(x,y) = check_landing(M,x,y,table);
         end
+        
         if (mod(x,10) == 0)
            disp('Progress (percentage):');
            disp((x-18)/964);
@@ -17,29 +20,31 @@ function result = main(M)
     end
 end
 
-function result=check_landing(m,x,y)
+
+function result=check_landing(m,x,y,table)
 
 	% check if touch the bottom	
 	% check if angle smaller than 10
     center = [x,y];
-    angle = 20;
     ifOk = true;
-    for i = 1:18
-        theta = angle/360*pi;
-        [a, b, c, d, e, f, g, h] = rotation(x, y, theta);
-        ifOk = checkAll(m, center, [int8(round(a)),int8(round(b)),int8(round(c)),int8(round(d)),int8(round(e)),int8(round(f)),int8(round(g)),int8(round(h))]);
+    
+    for i = 1:16
+        tmp = table(:,i);
+        tmp = tmp';
+    
+        [a, b, c, d, e, f, g, h] = get_real(tmp, x, y);
+        ifOk = checkAll(m, center, [ round(a), round(b), round(c), round(d), round(e), round(f), round(g), round(h) ] );
+        
         if (ifOk == false)
             break;
         end
-        angle = angle + 20;
     end
-    
+
     if(ifOk == true)
     	result = 1;
     else
     	result = 0;
     end
-    
 end
 
 function ok=checkAll(m, center, listxy)
@@ -47,7 +52,6 @@ function ok=checkAll(m, center, listxy)
     x = center(1);
     y = center(2);
     target = [center(1), center(2), m(x,y)];
-    
     
     %get the highest four points that decide the feet
     [p1x,p1y,p1z] = getFiveCircleMax(m,listxy(1),listxy(2));
@@ -110,7 +114,6 @@ function checkTwo = checkAngle(plane_parameters)
     if COSTHETA < cos(pi/10)
         checkTwo = true; % angle is bigger than 10
     end
-
 end
 
 
@@ -119,7 +122,7 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
     % max_in_circle is the max height of the circle C (radius = 5, center =
     % (x,y));
     
-    land = m(int8(x)-2:int8(x)+2,int8(y)-2:int8(y)+2);
+    land = m(x-2:x+2,y-2:y+2);
     land(1,1) = 0;
     land(1,5) = 0;
     land(5,1) = 0;
@@ -191,7 +194,6 @@ function if_over_bottom = checkTouchingBottom(m, center, p1, p2, p3, plane_param
             end
         end
     end
-    
 end
 
 function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
@@ -229,4 +231,23 @@ function [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(x, y, theta)
     y3 = v3(2,1) + y;
     y4 = v4(2,1) + y;
 
+end
+
+function table = RotationLookupTable()
+    table = zeros(8,16);
+    for i = 1:16
+        [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(0, 0, i*pi/32);
+        table(:,i) = [x1, y1, x2, y2, x3, y3, x4, y4]';
+    end
+end
+
+function [x1, y1, x2, y2, x3, y3, x4, y4] = get_real(tmp, x, y)
+    x1 = tmp(1) + x;
+    y1 = tmp(2) + y;
+    x2 = tmp(3) + x;
+    y2 = tmp(4) + y;
+    x3 = tmp(5) + x;
+    y3 = tmp(6) + y;
+    x4 = tmp(7) + x;
+    y4 = tmp(8) + y;
 end
