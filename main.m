@@ -1,16 +1,16 @@
 function result = main(M)
     %M = abs(rand(1000,1000));
     result = zeros(1000); 
-    angle = cos(pi/18);
+    angle = cos(pi/12);
     % x from 18 to 982
     % y from 18 to 982
     table = RotationLookupTable();
     
-    for x = 18:500
+    for x = 18:982
         disp('Currently Process Row:');
         disp(x)
         
-        for y = 18:500
+        for y = 18:982
             result(x,y) = check_landing(M, x, y, table, angle);
         end
     end
@@ -22,9 +22,9 @@ function result=check_landing(m,x,y,table, angle)
 	% check if touch the bottom	
 	% check if angle smaller than 10
     center = [x,y];
-    ifOk = true;
+    result = 1;
     
-    for i = 1:16
+    for i = 1:6
         tmp = table(:,i);
         tmp = tmp';
     
@@ -32,15 +32,12 @@ function result=check_landing(m,x,y,table, angle)
         ifOk = checkAll(m, center, [ round(a), round(b), round(c), round(d), round(e), round(f), round(g), round(h)], angle);
         
         if (ifOk == false)
-            break;
+            result = 0;
+            return;
         end
     end
 
-    if(ifOk == true)
-    	result = 1;
-    else
-    	result = 0;
-    end
+    
 end
 
 function ok=checkAll(m, center, listxy, angle)
@@ -87,7 +84,7 @@ function ok=checkAll(m, center, listxy, angle)
     
 end
 
-
+%CHECK(correct, JX)
 function [A, B, C, D] = plane_function(p1, p2, p3)
     normal = cross(p1 - p2, p1 - p3);
     %get the plane function parameters
@@ -97,7 +94,7 @@ function [A, B, C, D] = plane_function(p1, p2, p3)
     D = -(p1(1)*A + p1(2)*B + p1(3)*C);
 end
 
-
+%CHECK(correct, JX)
 function checkTwo = checkAngle(plane_parameters, angle)
     A = plane_parameters(1);
     B = plane_parameters(2);
@@ -130,6 +127,7 @@ function [nx,ny,nz]=getFiveCircleMax(m,x,y)
             if(land(i,j)==nz)
                 nx=x-(3-i);
                 ny=y-(3-j);
+                return;
             end
         end
     end
@@ -233,7 +231,7 @@ end
 
 %CHECK(correct, JX)
 function table = RotationLookupTable()
-    table = zeros(8,16);
+    table = zeros(8,6);
     for i = 1:6
         [x1, y1, x2, y2, x3, y3, x4, y4] = rotation(0, 0, i*pi/12);
         table(:,i) = [x1, y1, x2, y2, x3, y3, x4, y4]';
