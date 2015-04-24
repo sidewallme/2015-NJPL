@@ -6,11 +6,11 @@ function result = main(M)
     % y from 18 to 982
     table = RotationLookupTable();
     
-    for x = 18:983
+    for x = 18:183
         disp('Currently Process Row:');
         disp(x)
         
-        for y = 18:983
+        for y = 18:183
             result(x,y) = check_landing(M, x, y, table, angle);
         end
     end
@@ -86,12 +86,15 @@ end
 
 %CHECK(correct, JX)
 function [A, B, C, D] = plane_function(p1, p2, p3)
-    normal = cross(p1 - p2, p1 - p3);
+    a1 = [p1(1)*0.1, p1(2)*0.1,p1(3)];
+    a2 = [p2(1)*0.1, p2(2)*0.1,p2(3)];
+    a3 = [p3(1)*0.1, p3(2)*0.1,p3(3)];
+    normal = cross(a1 - a2, a1 - a3);
     %get the plane function parameters
     A=normal(1);
     B=normal(2);
     C=normal(3);
-    D = -(p1(1)*A + p1(2)*B + p1(3)*C);
+    D = -(a1(1)*A + a1(2)*B + a1(3)*C);
 end
 
 %CHECK(correct, JX)
@@ -180,7 +183,7 @@ function if_over_bottom = checkTouchingBottom(m, center, plane_parameters)
                 height = (-D-(A*i+B*j))/C;
                 over = m(i,j) > height;
                 if (over == true)
-                    dist = abs((A*i+B*j+C*m(i,j)+D)/(sqrt(double(A^2+B^2+C^2))));
+                    dist = abs((A*i*0.1+B*j*0.1+C*m(i,j)+D)/(sqrt(double(A^2+B^2+C^2))));
                     if (dist > 0.39 && over)
                         if_over_bottom=true;
                         return;
